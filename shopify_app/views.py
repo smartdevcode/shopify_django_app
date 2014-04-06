@@ -23,7 +23,9 @@ def authenticate(request):
     if shop:
         scope = settings.SHOPIFY_API_SCOPE
         redirect_uri = request.build_absolute_uri(reverse('shopify_app.views.finalize'))
-        permission_url = shopify.Session(shop.strip()).create_permission_url(scope, redirect_uri)
+
+        session = shopify.Session(shop.strip())
+        permission_url = session.create_permission_url(scope, redirect_uri)
         return redirect(permission_url)
 
     return redirect(_return_address(request))
@@ -31,16 +33,12 @@ def authenticate(request):
 def finalize(request):
     shop_url = request.REQUEST.get('shop')
     try:
-        shopify_session = shopify.Session(shop_url)
-        request.session['shopify'] = {
-            "shop_url": shop_url,
-            "access_token": shopify_session.request_token(request.REQUEST)
-        }
-
-    except Exception:
+        shopify_session = shopify.Session(shop_url, request.REQUEST)
+    except shopify.ValidationException:
         messages.error(request, "Could not log in to Shopify store.")
         return redirect(reverse('shopify_app.views.login'))
 
+    request.session['shopify'] = dict(shop_url=shop_url, access_token=shopify_session.token)
     messages.info(request, "Logged in to shopify store.")
 
     response = redirect(_return_address(request))
