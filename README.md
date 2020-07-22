@@ -26,20 +26,20 @@ Get It Running
 - Set Whitelisted redirection URL( http://localhost:8000/shopify/finalize/
 
 You will then have access to your API key and API secret KEY, you will need these
-for the next steps.
-
-### Setup Environment
-
-1. Create a `.env` file in the root of your project and add to it the following contents
-```
-SHOPIFY_API_KEY=[your api key]
-SHOPIFY_API_SECRET=[your api secret]
-```
-2. Generate a secret key and add it to `.env` by running the following in the command line: `printf 'DJANGO_SECRET=' >> .env; python -c 'import random; print("".join([random.choice("abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)") for i in range(50)]))' >> .env`
+for the next steps
 
 ### Run the App
 
 Run the following commands in the repo. We use [pipenv](https://github.com/pypa/pipenv) to get running faster
+
+- create a `.env` file in the root directory of this app
+- Add to it
+```
+SHOPIFY_API_KEY=[your api_key]
+SHOPIFY_API_SECRET=[your api_secret]
+DJANGO_SECRET="a secret string that only you know"
+```
+- run the app
 ```
 pipenv install
 pipenv run python manage.py runserver
